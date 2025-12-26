@@ -1,33 +1,66 @@
 
+// id is {{ id }}
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
 <script>
+
+// const delay = ms => new Promise(res => setTimeout(res, ms));
+
+// const number_of_frames={{number_of_frames}} ;
+
+
 $(document).ready(function() {
-   let displayed_graph=1
     $("#start-{{~id~}}").click(function(){
         console.log("click {{id}}") ;
-        displayed_graph=1 ;
-        display_flowcharts("{{id}}",displayed_graph,{{number_of_frames}}) ;
+        mermaid_animate_display_frame("{{id}}",1,{{number_of_frames}}) ;
    });
+
+    $("#loop-{{~id~}}").click(function(){
+        animloop()
+   });
+
    $("#forward-{{~id~}}").click(function(){
-        console.log("click {{id}}") ;
-        displayed_graph=displayed_graph+1 ;
-        console.log(displayed_graph);
-        if ( displayed_graph > number_of_frames) {
-            displayed_graph=1
-        }
-        display_flowcharts("{{id}}",displayed_graph,{{number_of_frames}}) ;
+        mermaid_animate_advance("{{id}}", {{number_of_frames}}) ;
    });
+
    $("#backward-{{~id~}}").click(function(){
         console.log("click {{id}}") ;
-        displayed_graph=displayed_graph-1 ;
-        console.log(displayed_graph);
-        if ( displayed_graph < 1) {
-            displayed_graph=number_of_frames
-        }
-        display_flowcharts("{{id}}",displayed_graph,{{number_of_frames}}) ;
+        mermaid_animate_stepback("{{id}}", {{number_of_frames}}) ;
    });
+
+
+    $("#details-{{~id~}}").on(
+  "click",
+  function() {
+        console.log("click details {{id}}") ;
+        mermaid_animate_open_details("{{id}}",{{number_of_frames}}) ;
+  });
+
+
+
+    function animloop(){
+            let frame=1 ;
+            var today = new Date();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+             if(s<10){
+                 s = "0"+s;
+             }
+             if (m < 10) {
+                m = "0" + m;
+            }
+            frame = mermaid_animate_advance("{{id}}", {{number_of_frames}}   ) ;
+
+            $("h1").text(h+" : "+m+" : "+s);
+            console.log("delay={{delay}} frame="+frame) ;
+            setTimeout(function(){animloop()}, {{delay}});
+    }
+
+   //  $("button").click(getdate);
+
+   // mermaid_animate_open_details("{{id}}",{{number_of_frames}}) ;
+
 
 });
 

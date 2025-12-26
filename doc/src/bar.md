@@ -1,4 +1,7 @@
+
+
 # bar 1
+
 
 ```mermaid
 
@@ -7,6 +10,7 @@ title: the title
 
 animate:
   nb_frames: 4
+  delay: 500
   frames:
     - 
         - X
@@ -54,6 +58,7 @@ title: hello world
 
 animate:
     nb_frames: 4
+    delay: 500
     frames:
         - 
             - X

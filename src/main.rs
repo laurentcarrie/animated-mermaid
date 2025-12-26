@@ -16,6 +16,7 @@ pub mod process_diagram;
 use process_diagram::process_diagram;
 pub mod handlebar_helpers;
 
+/// cli doc
 fn main() {
     mdbook_preprocessor_boilerplate::run(
         MermaidAnimatePreprocessor,

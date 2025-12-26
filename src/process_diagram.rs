@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 struct AnimateData {
     pub nb_frames: u8,
     pub frames: Vec<Vec<String>>,
+    pub delay: u16,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Hash, Clone)]
@@ -29,7 +30,7 @@ fn extract_meta(diagram: &str) -> anyhow::Result<(DiagramMeta, String)> {
     let re = Regex::new(r#"(?ms)---\n(.*)\n---(.*)"#).unwrap();
     if let Some(captures) = re.captures(diagram) {
         if let Some(data) = Some(captures[1].to_string()) {
-            dbg!("extracted meta: {}", &data);
+            // dbg!("extracted meta: {}", &data);
             let meta: DiagramMeta = serde_yaml::from_str(&data)?;
             Ok((meta, captures[2].to_string()))
         } else {
@@ -40,7 +41,7 @@ fn extract_meta(diagram: &str) -> anyhow::Result<(DiagramMeta, String)> {
     }
 }
 
-pub fn one_diagram(
+fn one_diagram(
     i: u8,
     meta: AnimateData,
     data: String,
@@ -62,21 +63,40 @@ pub fn one_diagram(
         serde_yaml::to_string(&meta)?,
         data.clone()
     );
+
     let frame_opt = meta.frames.get((i - 1) as usize);
+    let mut replacements: Vec<(String, String)> = vec![];
+    let mut data = ret.clone();
     if let Some(frame) = frame_opt {
-        dbg!("frame {} content: {:?}", &i, &frame);
+        // dbg!("frame {} content: {:?}", &i, &frame);
         for tag in frame {
             dbg!("processing tag: {}", &tag);
             let re = Regex::new(format!(r#"%% +mermaid-animate +{} +(?<body>.*)"#, tag).as_str())
                 .unwrap();
-            dbg!("regex: {:?}", &re);
-            for cap in re.captures_iter(&ret.clone()) {
-                dbg!("found frame match: {:?}", &cap);
-                let body = &cap["body"];
+            // dbg!("regex: {:?}", &re);
+            loop {
+                let caps = re.captures(&data);
+                if caps.is_none() {
+                    break;
+                }
+                let caps = caps.unwrap();
+                let body = &caps["body"];
                 dbg!("frame body: {}", &body);
-                ret.push_str(body);
+                let id = uuid::Uuid::new_v4().to_string();
+                replacements.push((id.clone(), body.to_string()));
+                let mut dst = String::new();
+                dst.push_str(&data[..caps.get(0).unwrap().start()]);
+                dst.push_str(id.to_string().as_str());
+                dst.push_str(&data[caps.get(0).unwrap().end()..]);
+                data = dst;
             }
         }
+    }
+
+    ret = data.clone();
+
+    for (id, body) in replacements {
+        ret = ret.replace(&id, &body);
     }
 
     ret.push_str(
@@ -118,20 +138,24 @@ pub fn process_diagram(htmldiv: &str) -> anyhow::Result<String> {
     struct X {
         id: String,
         number_of_frames: u8,
+        delay: u16,
     };
     let x = X {
         id: id.clone(),
         number_of_frames: meta.nb_frames,
+        delay: meta.delay,
     };
     let rendered_script = h.render("t1", &x)?;
 
     let mut ret = format!(
         r###"
         {rendered_script}
+<!-- details close id="details-{id}" -->
 <div>
 <button id="start-{id}">Start</button>
 <button id="backward-{id}">Back</button>
 <button id="forward-{id}">Next</button>
+<button id="loop-{id}">Loop</button>
 </div>
 "###
     );
@@ -154,5 +178,7 @@ pub fn process_diagram(htmldiv: &str) -> anyhow::Result<String> {
             )?
         ));
     }
+    // ret.push_str("</details>");
+    dbg!("final processed diagram: {}", &ret);
     Ok(ret.clone())
 }

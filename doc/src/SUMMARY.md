@@ -1,2 +1,3 @@
-<!-- - [foo](./foo.md) -->
+<!-- - [foo](./foo.md)  -->
 - [bar](./bar.md)
+- [pie](./pie.md)
