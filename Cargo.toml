@@ -29,6 +29,5 @@ assert_cmd = "2.0.0"
 pretty_assertions = "1.4.0"
 tempfile = "3.3.0"
 
-[workspace]
-members = [".", "xtask"]
+
 
