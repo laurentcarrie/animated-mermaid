@@ -8,7 +8,6 @@
 
 // const number_of_frames={{number_of_frames}} ;
 
-
 $(document).ready(function() {
     $("#start-{{~id~}}").click(function(){
         console.log("click {{id}}") ;
@@ -16,8 +15,15 @@ $(document).ready(function() {
    });
 
     $("#loop-{{~id~}}").click(function(){
-        animloop()
+        var $input =  $(this) ;        
+        $input.prop("started", true) ;
+        mermaid_animate_loop("{{id}}",{{number_of_frames}}, {{delay}}) ;
    });
+
+    $("#stop-{{~id~}}").click(function(){
+        var $input =  $("#loop-{{~id~}}") ;
+        $input.prop("started", false) ;   });
+
 
    $("#forward-{{~id~}}").click(function(){
         mermaid_animate_advance("{{id}}", {{number_of_frames}}) ;
@@ -38,30 +44,6 @@ $(document).ready(function() {
 
 
 
-    function animloop(){
-            let frame=1 ;
-            var today = new Date();
-            var h = today.getHours();
-            var m = today.getMinutes();
-            var s = today.getSeconds();
-             if(s<10){
-                 s = "0"+s;
-             }
-             if (m < 10) {
-                m = "0" + m;
-            }
-            frame = mermaid_animate_advance("{{id}}", {{number_of_frames}}   ) ;
-
-            $("h1").text(h+" : "+m+" : "+s);
-            console.log("delay={{delay}} frame="+frame) ;
-            setTimeout(function(){animloop()}, {{delay}});
-    }
-
-   //  $("button").click(getdate);
-
-   // mermaid_animate_open_details("{{id}}",{{number_of_frames}}) ;
-
-
-});
+}) ;
 
 </script> 

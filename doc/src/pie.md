@@ -1,5 +1,20 @@
 # pie
 
+```mermaid
+
+---
+
+title: x
+
+---
+
+info
+
+```
+
+
+# pie
+
 
 ```mermaid
 
@@ -28,6 +43,7 @@ animate:
 %% mermaid-animate A2    "Dogs" : 300 
     "Cats" : 85 
     "Rats" : 15 
+%% mermaid-animate A1    "Birds" : 0.1 
 %% mermaid-animate A2    "Birds" : 30 
 
 

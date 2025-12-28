@@ -70,7 +70,7 @@ fn one_diagram(
     if let Some(frame) = frame_opt {
         // dbg!("frame {} content: {:?}", &i, &frame);
         for tag in frame {
-            dbg!("processing tag: {}", &tag);
+            // dbg!("processing tag: {}", &tag);
             let re = Regex::new(format!(r#"%% +mermaid-animate +{} +(?<body>.*)"#, tag).as_str())
                 .unwrap();
             // dbg!("regex: {:?}", &re);
@@ -81,7 +81,7 @@ fn one_diagram(
                 }
                 let caps = caps.unwrap();
                 let body = &caps["body"];
-                dbg!("frame body: {}", &body);
+                // dbg!("frame body: {}", &body);
                 let id = uuid::Uuid::new_v4().to_string();
                 replacements.push((id.clone(), body.to_string()));
                 let mut dst = String::new();
@@ -104,7 +104,7 @@ fn one_diagram(
 </pre>
     "###,
     );
-    dbg!("one_diagram result: {}", &ret);
+    // dbg!("one_diagram result: {}", &ret);
     Ok(ret.clone())
 }
 
@@ -123,9 +123,10 @@ pub fn process_diagram(htmldiv: &str) -> anyhow::Result<String> {
     // dbg!("diagram: {}", &diagram);
     let (meta, data) = extract_meta(diagram)?;
     if meta.animate.is_none() {
-        dbg!("no animation requested, returning original diagram");
+        // dbg!("no animation requested, returning original diagram");
         return Ok(htmldiv.to_string());
     }
+    log::info!("Processing animated mermaid diagram with meta: {:?}", &meta);
     let meta = meta.animate.unwrap();
     // dbg!("meta: {:?}", &meta);
     // dbg!("data: {}", &data);
@@ -152,10 +153,11 @@ pub fn process_diagram(htmldiv: &str) -> anyhow::Result<String> {
         {rendered_script}
 <!-- details close id="details-{id}" -->
 <div>
-<button id="start-{id}">Start</button>
-<button id="backward-{id}">Back</button>
-<button id="forward-{id}">Next</button>
-<button id="loop-{id}">Loop</button>
+<button id="start-{id}" class="mermaid-animate">1st</button>
+<button id="backward-{id}" class="mermaid-animate">Back</button>
+<button id="forward-{id}" class="mermaid-animate">Next</button>
+<button id="loop-{id}" class="mermaid-animate">Loop</button>
+<button id="stop-{id}" class="mermaid-animate">Stop</button>
 </div>
 "###
     );
@@ -179,6 +181,6 @@ pub fn process_diagram(htmldiv: &str) -> anyhow::Result<String> {
         ));
     }
     // ret.push_str("</details>");
-    dbg!("final processed diagram: {}", &ret);
+    // dbg!("final processed diagram: {}", &ret);
     Ok(ret.clone())
 }

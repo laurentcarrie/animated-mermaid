@@ -1,41 +1,27 @@
-extern crate anyhow;
-extern crate handlebars;
-extern crate mdbook;
-extern crate regex;
-extern crate serde;
 extern crate serde_json;
-extern crate uuid;
 
 use anyhow::Result;
-use mdbook::book::Book;
-use mdbook::preprocess::{CmdPreprocessor, Preprocessor, PreprocessorContext};
-
+use mdbook_preprocessor::book::{Book, BookItem, Chapter};
+use mdbook_preprocessor::{Preprocessor, PreprocessorContext};
+use pulldown_cmark::{CodeBlockKind::*, Event, Options, Parser, Tag, TagEnd};
 use regex::Regex;
 
 pub mod process_diagram;
 use process_diagram::process_diagram;
 pub mod handlebar_helpers;
 
-/// cli doc
-fn main() {
-    mdbook_preprocessor_boilerplate::run(
-        MermaidAnimatePreprocessor,
-        "An mdbook preprocessor for animating Mermaid diagrams", // CLI description
-    );
-}
+pub struct MermaidAnimatePreprocessor;
 
-struct MermaidAnimatePreprocessor;
-
-fn run_section(section: &mdbook::book::BookItem) -> Result<mdbook::book::BookItem> {
+fn run_section(section: &BookItem) -> Result<BookItem> {
     // dbg!("section: {}", &section);
     let section = match section {
-        mdbook::book::BookItem::Chapter(chapter) => run_chapter(chapter)?,
+        BookItem::Chapter(chapter) => run_chapter(chapter)?,
         _ => unimplemented!(),
     };
-    Ok(mdbook::BookItem::Chapter(section))
+    Ok(BookItem::Chapter(section))
 }
 
-fn run_chapter(chapter: &mdbook::book::Chapter) -> Result<mdbook::book::Chapter> {
+fn run_chapter(chapter: &Chapter) -> Result<Chapter> {
     let re = Regex::new(r#"(?ms)(?<mermaid><pre .*?class=\"mermaid\".*?</pre>)"#).unwrap();
     let mut count = 1;
 
@@ -80,15 +66,15 @@ fn run_chapter(chapter: &mdbook::book::Chapter) -> Result<mdbook::book::Chapter>
     Ok(chapter.clone())
 }
 
-fn run_all(book: &mdbook::book::Book) -> Result<mdbook::book::Book> {
-    let sections: &Vec<mdbook::book::BookItem> = &book
-        .sections
+fn run_all(book: &Book) -> Result<Book> {
+    let items: &Vec<BookItem> = &book
+        .items
         .iter()
         .map(|section| run_section(section))
         .collect::<Result<Vec<_>>>()?;
 
     let mut book: &mut Book = &mut book.clone();
-    book.sections = sections.clone();
+    book.items = items.clone();
     Ok(book.clone())
 }
 
@@ -99,11 +85,6 @@ impl Preprocessor for MermaidAnimatePreprocessor {
 
     fn run(&self, ctx: &PreprocessorContext, book: Book) -> Result<Book> {
         log::info!("Running mermaid-animate preprocessor");
-        if let Some(nop_cfg) = ctx.config.get_preprocessor(self.name()) {
-            if nop_cfg.contains_key("blow-up") {
-                anyhow::bail!("Boom!!1!");
-            }
-        }
 
         let processed_book = run_all(&book);
         match processed_book {
@@ -115,7 +96,7 @@ impl Preprocessor for MermaidAnimatePreprocessor {
         }
     }
 
-    fn supports_renderer(&self, renderer: &str) -> bool {
-        renderer != "not-supported"
+    fn supports_renderer(&self, renderer: &str) -> Result<bool> {
+        Ok(renderer == "html")
     }
 }

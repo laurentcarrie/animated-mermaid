@@ -31,11 +31,11 @@ additional-css = ["theme/css/custom.css"]
 
 #[output.html.redirect]
 
-[preprocessor.alerts]
+#[preprocessor.alerts]
 
-[preprocessor.pikchr]
+#[preprocessor.pikchr]
 
-[preprocessor.emojicodes]
+#[preprocessor.emojicodes]
 
 [preprocessor.mermaid-animate]
 after=["mermaid"]

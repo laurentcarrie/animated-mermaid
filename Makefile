@@ -33,6 +33,6 @@ clean:
 
 
 doc-serve: ## run mdbook and serve
-	cp src/mermaid-animate.js doc/.
-	cd doc && mdbook serve
+	rm -f doc/mermaid-animate.js
+	( cd doc && mdbook-mermaid-animate install && mdbook serve )
 
