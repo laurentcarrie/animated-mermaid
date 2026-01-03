@@ -1,12 +1,13 @@
 //! Module for processing Mermaid diagrams.
 //!
 //!
-
+// use std::fs;
 use std::path::PathBuf;
+// use std::process::Command;
 
 use crate::handlebar_helpers::get_handlebar;
 use crate::mermaid_of_frame::mermaid_of_frame;
-use crate::model::{AnimateData, DiagramMeta};
+use crate::model as M;
 use mdbook_preprocessor::PreprocessorContext;
 use regex::Regex;
 
@@ -18,12 +19,12 @@ pub fn trim_html(s: String) -> String {
         .replace("&quot;", "\"")
 }
 
-pub(crate) fn extract_meta(diagram: &str) -> anyhow::Result<(DiagramMeta, String)> {
+pub(crate) fn extract_meta(diagram: &str) -> anyhow::Result<(M::DiagramMeta, String)> {
     let re = Regex::new(r#"(?ms)<pre.*?>.*---\n(.*?)\n---(.*?)</pre>"#).unwrap();
     if let Some(captures) = re.captures(diagram) {
         if let Some(data) = Some(captures[1].to_string()) {
             // dbg!("extracted meta: {}", &data);
-            let meta: DiagramMeta = serde_yaml::from_str(&data)?;
+            let meta: M::DiagramMeta = serde_yaml::from_str(&data)?;
             Ok((meta, captures[2].to_string()))
         } else {
             Err(anyhow::anyhow!("failed to extract diagram meta"))
@@ -33,11 +34,7 @@ pub(crate) fn extract_meta(diagram: &str) -> anyhow::Result<(DiagramMeta, String
     }
 }
 
-pub fn process_diagram(
-    counter: usize,
-    ctx: &PreprocessorContext,
-    htmldiv: &str,
-) -> anyhow::Result<String> {
+pub fn process_diagram(ctx: &PreprocessorContext, htmldiv: &str) -> anyhow::Result<String> {
     let re: Regex = Regex::new(
         r#"(?ms)<pre (?<prebefore>.*?)class=\"mermaid\"(?<preafter>.*?)>(?<diagram>.*?)</pre>"#,
     )?;
@@ -67,7 +64,7 @@ pub fn process_diagram(
             whole_path_ymlfile.push(yml_file.clone());
             log::info!("Loading animation metadata from file: {}", &yml_file);
             let yml_content = std::fs::read_to_string(&whole_path_ymlfile)?;
-            let meta_from_file: AnimateData = serde_yaml::from_str(&yml_content)?;
+            let meta_from_file: M::AnimateData = serde_yaml::from_str(&yml_content)?;
             meta_from_file
         }
         (Some(_), Some(_)) => {
@@ -84,8 +81,6 @@ pub fn process_diagram(
     };
 
     let frames = animate_data.frames.clone();
-    // log::info!("frames {:?}", frames);
-    // let frames = get_frames(&data);
     let nb_frames = frames.len() as u8;
     log::debug!(
         "Processing animated mermaid diagram with meta: {:?}",
@@ -123,18 +118,45 @@ pub fn process_diagram(
 </div>
 "###
     );
+    // let id = uuid::Uuid::new_v4().to_string();
+    // let mut command_mmdc = Command::new("mmdc");
+    // log::info!("{:?}", &ctx);
+    // let target_dir = PathBuf::from(&ctx.root)
+    //     .join(&ctx.config.book.src)
+    //     .join("generated/assets");
+    // std::fs::create_dir_all(&target_dir)?;
+    // let command = command_mmdc
+    //     .arg("--output")
+    //     .arg(format!("{}/{id}.png", &target_dir.display()))
+    //     .arg("--input".to_string())
+    //     .arg(format!(
+    //         "{}/frame-{}-{}.md",
+    //         &target_dir.display(),
+    //         id,
+    //         i + 1
+    //     ));
     for (i, frame) in frames.iter().enumerate() {
         let i = i + 1;
         let title = trim_html(frame.title.clone());
+        let mermaid_diagram = mermaid_of_frame(data.clone(), &animate_data, i - 1)?;
+        // let path = PathBuf::from(&ctx.root)
+        //     .join("generated/assets")
+        //     .join(format!("frame-{}-{}.md", id, i));
+        // log::info!("Writing frame {} mermaid diagram to {}", i, path.display());
+        // fs::write(
+        //     &path,
+        //     "```mermaid\n".to_string() + trim_html(mermaid_diagram.clone()).as_str() + "```",
+        // )?;
         ret.push_str(&format!(
             r###"
 
+          
+<div id="{id}-{i}" class="mermaid-frame" style="display:block;">
 
-<div id="{id}-{i}" class="mermaid-frame">
 
-<a id="anchor-animated-mermaid-{counter}-{i}"></a>
+<a id="anchor-animated-mermaid-{id}-{i}"></a>
 
-<a href="#anchor-animated-mermaid-{counter}-{i}">here</a>
+<a href="#anchor-animated-mermaid-{id}-{i}">here</a>
 
 
 <h3>Frame {i} / {nb_frames}</h3>
@@ -158,9 +180,15 @@ pub fn process_diagram(
 
 "###,
             serde_yaml::to_string(&diagram_meta)?,
-            trim_html(mermaid_of_frame(data.clone(), &animate_data, i - 1)?)
+            mermaid_diagram
         ));
     }
     log::debug!("processed diagram: {}", &ret);
+    // log::info!("Generating png frames with command: {:?}", &command);
+    // let status = command.output()?;
+    // log::info!("mmdc output: {:?}", &status);
+    // if !status.status.success() {
+    //     return Err(anyhow::anyhow!("mmdc command failed"));
+    // }
     Ok(ret.clone())
 }

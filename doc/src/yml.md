@@ -1,6 +1,6 @@
 # overview
 
-We define tags, which are string values.
+We define tags, which are string values, and variants, which also string values, and for each frame we map tags to variant names.
 
 The animation is a list of frames. For each frame, we each tag has one value. 
 But, because we don't want to define again, for each frame, the value of each tag, we only define the tags that change.
@@ -33,6 +33,14 @@ we want to animate, eg change the colors of the nodes and eges of the diagram, s
 in this example, `m<i>` ... are the nodes for the main branch, `d<i>` the nodes for the develop branch, and `e<i><j>` an edge from i to j 
 
 ### variants
+in this example, each node can be :
+- on (the commit is done)
+- off (the commit is not done)
+- from ( this is the previous commit)
+- to ( this is the next commit )
+
+same for edges...
+
 ```yml
 {{#include git-animate.yml:variants}}
 ```

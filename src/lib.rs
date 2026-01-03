@@ -31,17 +31,15 @@ fn run_chapter(ctx: &PreprocessorContext, chapter: &Chapter) -> Result<Chapter> 
     let re = Regex::new(r#"(?ms)(?<mermaid><pre .*?class=\"mermaid\".*?</pre>)"#).unwrap();
     let mut replacements: Vec<(String, String)> = vec![];
     let mut data = chapter.content.clone();
-    let mut counter = 0;
     loop {
         let caps = re.captures(&data);
         if caps.is_none() {
             break;
         }
-        counter += 1;
         let caps = caps.unwrap();
         // dbg!("caps: {:?}", &caps);
         let diagram = &caps["mermaid"];
-        let processed_diagram = process_diagram(counter, ctx, diagram)?;
+        let processed_diagram = process_diagram(ctx, diagram)?;
         // dbg!("before diagram: {}", &diagram);
         // dbg!("processed diagram: {}", &processed_diagram);
         let id = uuid::Uuid::new_v4();

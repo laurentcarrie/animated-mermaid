@@ -1,6 +1,15 @@
 # git
 
-## without linear commit 
+## why using linear commit ?
+
+- At frame 9, we want to commit the devs made in develop branch, to the main branch. The problem is that changes were made to the main branch. One solution is to merge d3 and m5. This solution is a problem :
+- can you really trust merge without going through a whole test cycle ?
+- appart from cicd, m6 was never really tested.
+- the fully tested version d3 is lost when develop branch is deleted.
+
+
+## solution : rebase
+
 
 ```mermaid
 ---
@@ -34,10 +43,10 @@ m3 em3m4@-->m4
 m4 em4m5@-->m5
 m5 em5m6@-->m6
 
-m3 em3d1@-->d1
 d1 ed1d2@-->d2
 d2 ed2d3@-->d3
 d3 ed3m6@-->m6
+
 
 m1((m1)) ;
 m2((m2)) ;
@@ -58,6 +67,7 @@ classDef class_edge    stroke-width:1px,color:black,stroke:black;
 classDef class_no_edge stroke-width:1px,stroke:white ;
 classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite,color black;
 
+%% mermaid-animate-tag rebase
 
 %% mermaid-animate-tag m1
 %% mermaid-animate-tag m2
@@ -81,6 +91,7 @@ classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25
 %% mermaid-animate-tag ed2d3
 
 %% mermaid-animate-tag ed3m6
+%% mermaid-animate-tag em5d1
 
 
 
