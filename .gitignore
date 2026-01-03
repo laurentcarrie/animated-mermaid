@@ -2,4 +2,5 @@ tmp/
 target
 doc/book
 doc/mermaid-animate.js
+.token
 

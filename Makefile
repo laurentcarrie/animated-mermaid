@@ -35,7 +35,7 @@ clean:
 doc-serve: ## run mdbook and serve
 	rm -f doc/*.js
 	mdbook-mermaid install doc
-	mdbook-mermaid-animate install doc
+	./target/debug/mdbook-mermaid-animate install doc
 	curl https://unpkg.com/mermaid@11.12.2/dist/mermaid.min.js -o doc/mermaid.min.js --insecure
 	( cd doc &&  PATH=../target/debug:"${PATH}"  mdbook serve )
 	

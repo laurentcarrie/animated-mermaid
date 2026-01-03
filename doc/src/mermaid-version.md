@@ -1,11 +1,14 @@
 # mermaid version
 
 
+![blahblkdfa](../generated/assets/x.gif)
+
 this comes from your settings. Check you have version >= `11.12.2`
 
 ```mermaid
 
 ---
+
 
 ---
 

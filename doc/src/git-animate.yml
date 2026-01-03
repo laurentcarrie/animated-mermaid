@@ -1,6 +1,6 @@
   delay: 3000
   # ANCHOR: tags
-  tags: [ m1,m2,m3,m4,m5,m6,d1,d2,d3,em1m2, em2m3, em3m4, em4m5, em5m6,em6m7,em3d1,ed1d2,ed2d3,em3d1,ed3m6]
+  tags: [ m1,m2,m3,m4,m5,m6,d1,d2,d3,em1m2, em2m3, em3m4, em4m5, em5m6,em6m7,em3d1,ed1d2,ed2d3,em3d1,ed3m6,em5d1,rebase]
   # ANCHOR_END: tags
 
   # ANCHOR: variants
@@ -19,6 +19,10 @@
      value: 'class {tag} class_from;'
    - name: nto
      value: 'class {tag} class_to;'
+   - name: rebase-off
+     value: 'm3 em3d1@--> d1'
+   - name: rebase-on
+     value: 'm5 em5d1@--> d1'
   # ANCHOR_END: variants
 
   frames:
@@ -28,6 +32,7 @@
         </h1>
       # initial state, everything hidden
       toggles:
+        - rebase@rebase-off
         - m1@nhidden
         - m2@nhidden
         - m3@nhidden
@@ -48,6 +53,7 @@
         - ed1d2@hidden
         - ed2d3@hidden
         - ed3m6@hidden
+        - em5d1@hidden
 
 
     - title: |
@@ -134,7 +140,7 @@
         - m5@nto      
 
     - title: |
-       <h1 style="background-color:Lavender">
+       <h1 style="background-color:Red">
        merge develop to base
        </h1>
        <p style="background-color:Pink">
@@ -151,5 +157,52 @@
         - m5@nfrom
         - d3@nfrom
         - m6@nto
+
+    - title: |
+        <h1 style="background-color:Lavender">
+        rebase develop branch onto main
+        </h1>
+        this will replay d2 and d3 commits
+      toggles:
+        - rebase@rebase-on
+        - em5m6@hidden
+        - ed3m6@hidden        
+        - em5m6@hidden
+        - ed3m6@hidden
+        - em3d1@hidden
+        - m6@nhidden
+        - em5d1@animate
+        - ed1d2@animate   
+        - ed2d3@animate
+        - d1@nto
+        - d2@nto
+        - d3@nto
+
+    - title: |
+        <h1 style="background-color:Lavender">
+        rebase merge develop branch onto main
+        </h1>
+        there is no conflict, m6 is exactly d3
+      toggles:
+        - rebase@rebase-on
+        - em5m6@hidden
+        - ed3m6@hidden        
+        - em5m6@hidden
+        - ed3m6@hidden
+        - em3d1@hidden
+        - m6@nhidden
+        - em5d1@active
+        - ed1d2@active   
+        - ed2d3@active
+        - d1@nactive
+        - d2@nactive
+        - d3@nfrom
+        - m5@active
+        - m6@nto
+        - ed3m6@animate    
+
+
+
+      
 
 
