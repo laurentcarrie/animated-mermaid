@@ -14,12 +14,23 @@ pub(crate) fn tags_of_frame(meta: &M::AnimateData) -> Vec<HashMap<String, String
                     log::error!("Tag not found: {}", &tag_name);
                     continue;
                 }
+                // Find tag value if any, else use tag name
+                let tag_value = {
+                    let mut found_value = tag_name.to_string();
+                    for tag_value in &meta.tag_values {
+                        if tag_value.name == tag_name {
+                            found_value = tag_value.value.clone();
+                            break;
+                        }
+                    }
+                    found_value
+                };
                 let tag_action = parts[1];
                 'inner: {
                     for variant in &meta.variants {
                         if variant.name == tag_action {
                             let value = variant.value.clone();
-                            let value = value.replace("{tag}", tag_name);
+                            let value = value.replace("{tag}", &tag_value);
                             current.insert(tag_name.to_string(), value.clone());
                             break 'inner;
                         }

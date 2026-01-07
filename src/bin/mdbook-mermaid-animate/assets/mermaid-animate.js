@@ -39,15 +39,15 @@ function mermaid_animate_display_frame(id, frame, number_of_frames) {
         }
     }
     // console.log("number of opened details " + nbopened);
-    if (nbopened > 1) {
-        for (let i = 1; i <= number_of_frames; i++) {
-            let id_full = id + "-" + i
-            let div = document.getElementById(id_full);
-            div.hidden = true;
-            div.visibility = "hidden";
-            div.style.display = "none";
-        }
-    }
+    // if (nbopened > 1) {
+    //     for (let i = 1; i <= number_of_frames; i++) {
+    //         let id_full = id + "-" + i
+    //         let div = document.getElementById(id_full);
+    //         div.hidden = true;
+    //         div.visibility = "hidden";
+    //         div.style.display = "none";
+    //     }
+    // }
     for (let i = 1; i <= number_of_frames; i++) {
         let id_full = id + "-" + i
         let div = document.getElementById(id_full);
@@ -82,9 +82,12 @@ function mermaid_animate_advance(id, number_of_frames) {
 
     frame = frame + 1;
     // console.log("advance to frame "+frame);
-    if (frame > number_of_frames) {
-        frame = 1
+    min_frame = $("#frame-min-" + id).val();
+    max_frame = $("#frame-max-" + id).val();
+    if (frame > max_frame) {
+           frame = min_frame;
     }
+
     mermaid_animate_display_frame(id, frame, number_of_frames);
     return frame;
 };
@@ -102,9 +105,10 @@ function mermaid_animate_stepback(id, number_of_frames) {
     }
 
     frame = frame - 1;
-    // console.log(frame);
-    if (frame < 1) {
-        frame = number_of_frames
+    min_frame = $("#frame-min-" + id).val();
+    max_frame = $("#frame-max-" + id).val();    
+    if (frame < min_frame) {
+        frame = max_frame;
     }
     mermaid_animate_display_frame(id, frame, number_of_frames);
     return frame;
@@ -138,6 +142,17 @@ function mermaid_animate_loop(id, number_of_frames ) {
     setTimeout(function () { mermaid_animate_loop(id, number_of_frames ) }, delay);
 };
 
+function mermaid_animate_start(id, number_of_frames) {
+    console.log("start animation " + id);
+    $("#loop-" + id).prop("started", true);
+    mermaid_animate_loop(id, number_of_frames);
+}
+
+function mermaid_animate_stop(id ) {
+    console.log("stop animation " + id);
+    $("#loop-" + id).prop("started", false);
+}
+
 
 function mermaid_animate_onload() {
     console.log("mermaid_animate_onload ");
@@ -158,10 +173,30 @@ function mermaid_animate_onload() {
 
 window.addEventListener("load", (event) => {
     var cusid_ele = document.getElementsByClassName('mermaid-frame');
+    for (var i = 0; i < cusid_ele.length; ++i) {
+        var item = cusid_ele[i];  
+        var id = item.getAttribute("id");
+        item.style.display='block' ;
+    }
     for (var i = 1; i < cusid_ele.length; ++i) {
         var item = cusid_ele[i];  
-        // console.log("mermaid element " + item.id);
+        var id = item.getAttribute("id");
         item.style.display='none' ;
     }
+    var id= cusid_ele[0].getAttribute("id").split("-1")[0]    ;
+    console.log("mermaid element " + id);
+    var b = document.getElementById("loop-" + id);
+    console.log("loop button " + b);
+    var auto_start = $("#loop-"+id).prop("auto-start") ;
+    console.log("auto-start property " + auto_start) ;
+    if (auto_start == true) {
+        console.log("auto start animation for " + id) ;
+        mermaid_animate_start(id, cusid_ele.length) ;
+    }
+
+    // mermaid_animate_init(id,cusid_ele.length) ;
+
+
+
 });
 

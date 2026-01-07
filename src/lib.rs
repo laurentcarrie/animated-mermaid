@@ -1,3 +1,7 @@
+/// blah blah
+/// Mermaid Animate Preprocessor for mdBook
+/// =======================================
+/// ======================================
 extern crate serde_json;
 
 use anyhow::Result;

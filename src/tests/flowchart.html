@@ -1,9 +1,16 @@
 <pre class="mermaid">
 ---
 title: Animated Diagram
+config:
+  flowchart:
+    curve: basis
+    
 animate:
   delay: 1000
-  tags: [ A, B]
+  tags: [ Atag, B]
+  tag-values:
+    - name: "Atag"
+      value: A
   variants:
     - name: "red"
       value: 'class {tag} red ;'
@@ -14,7 +21,7 @@ animate:
   frames:
     - title: |
         <p style="background-color:aquamarine">Frame 1</p>
-      toggles: ["A@red","B@blue"]
+      toggles: ["Atag@red","B@blue"]
     - title: |
         <p style="background-color:coral">Frame 2</p>
       toggles: ["B@white"]      
@@ -27,6 +34,6 @@ graph TD;
 
     classDef red fill:#f96,stroke:#333,stroke-width:2px;
     classDef blue fill:#bbf,stroke:#333,stroke-width:2px;
-    %% mermaid-animate-tag A
+    %% mermaid-animate-tag Atag
     %% mermaid-animate-tag B
 </pre>

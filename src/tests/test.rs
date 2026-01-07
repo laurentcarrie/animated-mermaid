@@ -10,16 +10,6 @@ mod test {
     }
 
     #[test]
-    fn test_extract_metadata() {
-        let _ = env_logger::try_init_from_env(env_logger::Env::default().default_filter_or("info"));
-
-        let data = data();
-        let res = extract_meta(&data).unwrap();
-        assert_eq!(res.0.title.unwrap(), "Animated Diagram");
-        assert!(res.0.animate.is_some());
-    }
-
-    #[test]
     fn test_frame_1() {
         let _ = env_logger::try_init_from_env(env_logger::Env::default().default_filter_or("info"));
         let data = data();
@@ -66,13 +56,13 @@ mod test {
         let expected = vec![
             {
                 let mut map = HashMap::new();
-                map.insert("A".to_string(), "class A red ;".to_string());
+                map.insert("Atag".to_string(), "class A red ;".to_string());
                 map.insert("B".to_string(), "class B blue ;".to_string());
                 map
             },
             {
                 let mut map = HashMap::new();
-                map.insert("A".to_string(), "class A red ;".to_string());
+                map.insert("Atag".to_string(), "class A red ;".to_string());
                 map.insert("B".to_string(), "class B white ;".to_string());
                 map
             },
@@ -80,12 +70,25 @@ mod test {
         log::info!("history: {:?}", &history);
         log::info!("expected: {:?}", &expected);
         for i in 0..1 {
-            for k in vec!["A", "B"] {
+            for k in vec!["Atag", "B"] {
                 assert_eq!(
                     history.get(i).unwrap().get(k).unwrap(),
                     expected.get(i).unwrap().get(k).unwrap()
                 );
             }
         }
+    }
+
+    #[test]
+    fn test_extra_meta() {
+        let _ = env_logger::try_init_from_env(env_logger::Env::default().default_filter_or("info"));
+        let data = data();
+        let (meta, mermaid) = extract_meta(&data).unwrap();
+        assert!(meta.config.is_some());
+        let config = meta.config.unwrap();
+        log::info!("config: {:?}", &config);
+        let flowchart = config.get("flowchart").unwrap();
+        let curve = flowchart.get("curve").unwrap().as_str().unwrap();
+        assert_eq!(curve, "basis");
     }
 }

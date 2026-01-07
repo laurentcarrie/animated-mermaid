@@ -53,6 +53,26 @@ cargo install mdbook-mermaid-animate
 mdbook-mermaid-animate install <path to your doc sources>
 ```
 
+## in your book.toml
+
+add :
+```
+preprocessor.mermaid-animate]
+after=["mermaid"]
+```
+
+and :
+```
+[output.html]
+#mathjax-support = true
+#additional-css = ["dtmo.css", "mermaid.css"]
+additional-js = [
+    "mermaid.min.js", 
+    "mermaid-init.js", 
+    "mermaid-animate.js",
+]
+```
+
 ## write your documentation
 
 follow mdbook guidelines to write the `.md` files of your documentation

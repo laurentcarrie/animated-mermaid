@@ -1,3 +1,12 @@
+//! bljf;adjfkafa
+//!     
+
+/// blah blah
+/// Mermaid Animate Preprocessor for mdBook
+/// =======================================
+/// ======================================
+///
+///
 use clap::{Arg, ArgMatches, Command, crate_version};
 use mdbook_preprocessor::Preprocessor;
 use mdbook_preprocessor::errors::Error;

@@ -96,16 +96,22 @@ pub fn process_diagram(ctx: &PreprocessorContext, htmldiv: &str) -> anyhow::Resu
         id: String,
         number_of_frames: u8,
         delay: u16,
+        auto_start: bool,
     }
     let x = X {
         id: id.clone(),
         number_of_frames: nb_frames,
         delay: animate_data.delay,
+        auto_start: animate_data.auto_start,
     };
     let rendered_script = h.render("t1", &x)?;
     let delay = animate_data.delay;
 
     let mermaid_class = "mermaid";
+
+    let min_frame = animate_data.min_frame.unwrap_or(1);
+    let max_frame = animate_data.max_frame.unwrap_or(nb_frames.into());
+    log::info!("Using frame range: {} to {}", min_frame, max_frame);
 
     let mut ret = format!(
         r###"
@@ -117,6 +123,8 @@ pub fn process_diagram(ctx: &PreprocessorContext, htmldiv: &str) -> anyhow::Resu
 <button id="loop-{id}" class="mermaid-animate">Loop</button>
 <button id="stop-{id}" class="mermaid-animate">Stop</button>
 <input type="number" id="delay-{id}" value="{delay}" step="100" class="mermaid-animate"> ms
+<input type="number" id="frame-min-{id}" value="{min_frame}" step="1" class="mermaid-animate"> f min
+<input type="number" id="frame-max-{id}" value="{max_frame}" step="1" class="mermaid-animate"> f max
 
 </div>
 "###
@@ -159,7 +167,7 @@ pub fn process_diagram(ctx: &PreprocessorContext, htmldiv: &str) -> anyhow::Resu
 
 <a id="anchor-animated-mermaid-{id}-{i}"></a>
 
-<a href="#anchor-animated-mermaid-{id}-{i}">here</a>
+<!-- a href="#anchor-animated-mermaid-{id}-{i}">here</a -->
 
 
 <h3>Frame {i} / {nb_frames}</h3>

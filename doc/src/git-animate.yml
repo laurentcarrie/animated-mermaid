@@ -1,28 +1,32 @@
-  delay: 3000
+  delay: 1000
+  auto-start: true
+  min-frame: 11
+  max-frame: 11
   # ANCHOR: tags
-  tags: [ m1,m2,m3,m4,m5,m6,d1,d2,d3,em1m2, em2m3, em3m4, em4m5, em5m6,em6m7,em3d1,ed1d2,ed2d3,em3d1,ed3m6,em5d1,rebase]
+  tags: [ m1,m2,m3,m4,m5,m6,mr6,d1,d2,d3,dr1,dr2,dr3,em1m2, em2m3, em3m4, em4m5, em5m6,em6m7,em3d1,em5d1,ed1d2,ed2d3,ed3m6,em5dr1,edr3mr6 ,
+  ed3dr1,edr1dr2,edr2dr3,edr3m6,em5mr6   ]
   # ANCHOR_END: tags
 
   # ANCHOR: variants
   variants:
-   - name: animate
-     value: 'class {tag} animate; '
-   - name: hidden
-     value: 'class {tag} class_no_edge;'
-   - name: active
-     value: 'class {tag} class_edge;'
-   - name: nactive
-     value: 'class {tag} class_on;'
-   - name: nhidden
-     value: 'class {tag} class_off;'
-   - name: nfrom
-     value: 'class {tag} class_from;'
-   - name: nto
-     value: 'class {tag} class_to;'
-   - name: rebase-off
-     value: 'm3 em3d1@--> d1'
-   - name: rebase-on
-     value: 'm5 em5d1@--> d1'
+   - name: animate_edge
+     value: 'class {tag} class_animate_edge; '
+   - name: hidden_edge
+     value: 'class {tag} class_hidden_edge;'
+   - name: active_edge
+     value: 'class {tag} class_active_edge;'
+   - name: active_node
+     value: 'class {tag} class_active_node; '
+   - name: hidden_node
+     value: 'class {tag} class_hidden_node; '
+   - name: from_node
+     value: 'class {tag} class_from_node; '
+   - name: to_node
+     value: 'class {tag} class_to_node; '
+   - name: old_node
+     value: 'class {tag} class_old_node; '
+   - name: old_edge
+     value: 'class {tag} class_old_edge; '
   # ANCHOR_END: variants
 
   frames:
@@ -32,49 +36,57 @@
         </h1>
       # initial state, everything hidden
       toggles:
-        - rebase@rebase-off
-        - m1@nhidden
-        - m2@nhidden
-        - m3@nhidden
-        - m4@nhidden
-        - m5@nhidden
-        - m6@nhidden
-        - d1@nhidden
-        - d2@nhidden
-        - d3@nhidden
-        - em1m2@hidden
-        - em2m3@hidden
-        - em3m4@hidden
-        - em4m5@hidden 
-        - em5m6@hidden 
-        - em6m7@hidden 
-        - em4m5@hidden 
-        - em3d1@hidden
-        - ed1d2@hidden
-        - ed2d3@hidden
-        - ed3m6@hidden
-        - em5d1@hidden
-
+        - m1@hidden_node
+        - m2@hidden_node
+        - m3@hidden_node
+        - m4@hidden_node
+        - m5@hidden_node
+        - m6@hidden_node
+        - mr6@hidden_node
+        - d1@hidden_node
+        - d2@hidden_node
+        - d3@hidden_node
+        - dr1@hidden_node
+        - dr2@hidden_node
+        - dr3@hidden_node
+        - em1m2@hidden_edge
+        - em2m3@hidden_edge
+        - em3m4@hidden_edge
+        - em4m5@hidden_edge 
+        - em5m6@hidden_edge 
+        - em6m7@hidden_edge 
+        - em4m5@hidden_edge 
+        - em3d1@hidden_edge
+        - ed1d2@hidden_edge
+        - ed2d3@hidden_edge
+        - ed3m6@hidden_edge
+        - em5dr1@hidden_edge
+        - ed3dr1@hidden_edge
+        - edr1dr2@hidden_edge
+        - edr2dr3@hidden_edge
+        - edr3m6@hidden_edge
+        - edr3mr6@hidden_edge
+        - em5mr6@hidden_edge
 
     - title: |
         <h1 style="background-color:Lavender">
         add commit in main
         </h1>
       toggles: 
-        - em1m2@animate
-        - m1@nfrom
-        - m2@nto
+        - em1m2@animate_edge
+        - m1@from_node
+        - m2@to_node
 
     - title: |
         <h1 style="background-color:Lavender">
         add another commit in main
         </h1>
       toggles: 
-        - em1m2@active
-        - em2m3@animate 
-        - m1@active
-        - m2@nfrom
-        - m3@nto
+        - em1m2@active_edge
+        - em2m3@animate_edge 
+        - m1@active_node
+        - m2@from_node
+        - m3@to_node
 
   # ANCHOR: frames
 
@@ -83,22 +95,22 @@
         checkout develop branch
         </h1>
       toggles: 
-        - em2m3@active
-        - em3d1@animate 
-        - m2@active
-        - m3@nfrom
-        - d1@nto        
+        - em2m3@active_edge
+        - em3d1@animate_edge 
+        - m2@active_node
+        - m3@from_node
+        - d1@to_node        
 
     - title: |
         <h1 style="background-color:Lavender">
         add commit in develop
         </h1>
       toggles: 
-        - em3d1@active
-        - ed1d2@animate 
-        - m3@active
-        - d1@nfrom
-        - d2@nto            
+        - em3d1@active_edge
+        - ed1d2@animate_edge 
+        - m3@active_node
+        - d1@from_node
+        - d2@to_node            
 
 # ANCHOR_END: frames
 
@@ -108,55 +120,48 @@
         add another commit in develop
         </h1>
       toggles: 
-        - ed1d2@active
-        - ed2d3@animate 
-        - d1@active
-        - d2@nfrom
-        - d3@nto       
+        - ed1d2@active_edge
+        - ed2d3@animate_edge 
+        - d1@active_edge
+        - d2@from_node
+        - d3@to_node       
 
     - title: |
         <h1 style="background-color:Coral">
-        in the mean time ....
-         other devs add new commits to main branch
+        in the mean time .... other devs add new commits to main branch
         </h1>
       toggles: 
-        - ed2d3@active
-        - em3m4@animate 
-        - d2@active
-        - d3@active
-        - m3@nfrom
-        - m4@nto       
+        - ed2d3@active_edge
+        - em3m4@animate_edge 
+        - d2@active_node
+        - d3@active_node
+        - m3@from_node
+        - m4@to_node       
 
     - title: |
         <h1 style="background-color:Coral">
-        in the mean time ....
-         other devs add new commits to main branch
+        in the mean time .... other devs add new commits to main branch
         </h1>
       toggles: 
-        - em3m4@active
-        - em4m5@animate 
-        - m3@active
-        - m4@nfrom
-        - m5@nto      
+        - em3m4@active_edge
+        - em4m5@animate_edge 
+        - m3@active_node
+        - m4@from_node
+        - m5@to_node      
 
     - title: |
        <h1 style="background-color:Red">
        merge develop to base
        </h1>
-       <p style="background-color:Pink">
-        problem : m6 is not d3. The tested version d3 is different. It may be wrong, and if develop branch is deleted, d3 is lost forever
-        </p>
-        <p style="background-color:SpringGreen">
-        solution : linear commit and rebase
-        </p>
       toggles:
-        - em4m5@active
-        - em5m6@animate
-        - ed3m6@animate
-        - m4@active
-        - m5@nfrom
-        - d3@nfrom
-        - m6@nto
+        - em4m5@active_edge
+        - em5m6@animate_edge
+        - ed3m6@animate_edge
+        - m4@active_node
+        - m5@active_node
+        - m5@from_node
+        - d3@from_node
+        - m6@to_node
 
     - title: |
         <h1 style="background-color:Lavender">
@@ -164,19 +169,22 @@
         </h1>
         this will replay d2 and d3 commits
       toggles:
-        - rebase@rebase-on
-        - em5m6@hidden
-        - ed3m6@hidden        
-        - em5m6@hidden
-        - ed3m6@hidden
-        - em3d1@hidden
-        - m6@nhidden
-        - em5d1@animate
-        - ed1d2@animate   
-        - ed2d3@animate
-        - d1@nto
-        - d2@nto
-        - d3@nto
+        - em5m6@hidden_edge
+        - ed3m6@old_edge        
+        - em5m6@hidden_edge
+        - em3d1@old_edge
+        - m6@old_node
+        - d1@old_node
+        - d2@old_node
+        - d3@old_node
+        - em5dr1@animate_edge
+        - ed1d2@old_edge
+        - ed2d3@old_edge
+        - dr1@to_node
+        - dr2@to_node
+        - dr3@to_node
+        - edr1dr2@animate_edge
+        - edr2dr3@animate_edge
 
     - title: |
         <h1 style="background-color:Lavender">
@@ -184,22 +192,19 @@
         </h1>
         there is no conflict, m6 is exactly d3
       toggles:
-        - rebase@rebase-on
-        - em5m6@hidden
-        - ed3m6@hidden        
-        - em5m6@hidden
-        - ed3m6@hidden
-        - em3d1@hidden
-        - m6@nhidden
-        - em5d1@active
-        - ed1d2@active   
-        - ed2d3@active
-        - d1@nactive
-        - d2@nactive
-        - d3@nfrom
-        - m5@active
-        - m6@nto
-        - ed3m6@animate    
+        - em5m6@hidden_edge
+        - em5m6@hidden_edge
+        - em3d1@hidden_edge
+        - em5d1@active_edge
+        - edr1dr2@active_edge   
+        - edr2dr3@active_edge
+        - dr1@active_node
+        - dr2@active_node
+        - dr3@from_node
+        - m5@active_node
+        - mr6@to_node
+        - edr3mr6@animate_edge    
+        - em5dr1@active_edge
 
 
 

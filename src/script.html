@@ -13,6 +13,8 @@ $(document).ready(function() {
         mermaid_animate_display_frame("{{id}}",1,{{number_of_frames}}) ;
    });
 
+
+
     $("#loop-{{~id~}}").click(function(){
         var $input =  $(this) ;        
         $input.prop("started", true) ;
@@ -41,7 +43,7 @@ $(document).ready(function() {
         mermaid_animate_open_details("{{id}}",{{number_of_frames}}) ;
   });
 
-
+  $("#loop-{{~id~}}").prop("auto-start", {{auto_start}}) ;
 
 }) ;
 
